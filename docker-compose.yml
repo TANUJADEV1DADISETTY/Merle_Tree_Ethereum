@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  # ── Full demo (Part 1 tests + Part 3 end-to-end verification) ──────────────
+  merkle-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ethereum-merkle-tree:latest
+    container_name: merkle-demo
+    environment:
+      ETH_RPC_URL: ${ETH_RPC_URL}
+      ETH_BLOCK_NUMBER: ${ETH_BLOCK_NUMBER:-latest}
+      ETH_TX_INDEX: ${ETH_TX_INDEX:-0}
+    env_file:
+      - .env
+
+  # ── Part 1 only – Merkle Tree unit tests (no network required) ─────────────
+  merkle-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ethereum-merkle-tree:latest
+    container_name: merkle-tests
+    command: ["python", "part1_tree.py"]
+    # No ETH_RPC_URL needed for unit tests
+
+  # ── Part 2 only – Block inspection ────────────────────────────────────────
+  merkle-fetch:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ethereum-merkle-tree:latest
+    container_name: merkle-fetch
+    command: ["python", "part2_fetch.py"]
+    environment:
+      ETH_RPC_URL: ${ETH_RPC_URL}
+      ETH_BLOCK_NUMBER: ${ETH_BLOCK_NUMBER:-latest}
+    env_file:
+      - .env
