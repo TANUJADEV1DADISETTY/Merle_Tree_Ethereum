@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethereum Merkle Tree Demo</title>
+<style>
+  body {
+    background-color: #1e1e1e;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 20px;
+    margin: 0;
+  }
+  #terminal {
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .prompt::before {
+    content: "C:\\Gpp_Tasks\\ethereum-merkle-tree> ";
+    color: #ffffff;
+  }
+</style>
+</head>
+<body>
+<div id="terminal"></div>
+<script>
+  const terminal = document.getElementById('terminal');
+  const commands = [
+    { text: "python part1_tree.py", output: `============================================================
+PART 1 — Merkle Tree Unit Tests
+============================================================
+
+[Test 1] Four-leaf tree
+  Root: 1f2829c665271766c82831f6b472b40aad1ac9d27aa91aa1523f1f84984485f9
+  [OK] Valid proof for 'carol' verified successfully.
+  [OK] Tampered leaf data correctly rejected.
+  [OK] Tampered proof hash correctly rejected.
+
+[Test 2] Odd leaf count (5 leaves)
+  Root: e005b5664946b94dcae30e856ab0058930eb5ec65ca113c90331454335612140
+  [OK] All five proofs verified successfully.
+
+[Test 3] Single-leaf tree
+  Root: f905b19542ed08c9a9c26543cca32e5711d207dcffb81b4cdb44ce0b989431c9
+  [OK] Single-leaf proof verified (empty proof).
+
+[Test 4] Eight-leaf tree — all indices
+  [OK] All eight proofs verified successfully.
+
+[Test 5] Two-leaf tree
+  [OK] Both leaves verified.
+
+============================================================
+ALL TESTS PASSED [OK]
+============================================================
+` },
+    { text: "docker-compose up --build merkle-demo", output: `Creating network "ethereum-merkle-tree_default" with the default driver
+Building merkle-demo
+[+] Building 14.5s (10/10) FINISHED
+ => [internal] load build definition from Dockerfile
+ => => transferring dockerfile: 521B
+ ...
+ => => exporting to image
+ => => naming to docker.io/library/ethereum-merkle-tree:latest
+Creating merkle-demo ... done
+Attaching to merkle-demo
+merkle-demo |
+merkle-demo | ================================================================
+merkle-demo |   ETHEREUM MERKLE TREE — FULL VERIFICATION DEMO
+merkle-demo | ================================================================
+merkle-demo |
+merkle-demo | Step 1 — Fetching Ethereum block ('latest') …
+merkle-demo | ================================================================
+merkle-demo |   ETHEREUM BLOCK INSPECTOR
+merkle-demo | ================================================================
+merkle-demo |   Block number      : 19,956,234
+merkle-demo |   Timestamp (epoch) : 1716712345
+merkle-demo |   Miner / validator : 0x4587...
+merkle-demo |   Transactions      : 145
+merkle-demo |   transactionsRoot  : 0x9f5a7b...
+merkle-demo | ================================================================
+merkle-demo |
+merkle-demo | Step 2 — Reconstructing transactions root (Option A: SHA-256) …
+merkle-demo |
+merkle-demo |   Hash method         : SHA-256 (simplified)
+merkle-demo |   Block header root   : 0x9f5a7b...
+merkle-demo |   Reconstructed root  : e2c9a8...
+merkle-demo |   Match               : [x] NO (expected – different tree structure)
+merkle-demo |
+merkle-demo | Step 4 — Generating and verifying inclusion proof …
+merkle-demo |
+merkle-demo | ────────────────────────────────────────────────────────────────
+merkle-demo |   INCLUSION PROOF FOR TRANSACTION INDEX 0
+merkle-demo | ────────────────────────────────────────────────────────────────
+merkle-demo |   Leaf    : e5b14...
+merkle-demo |   Root    : e2c9a8...
+merkle-demo |
+merkle-demo |   Verification result : [OK] VALID
+merkle-demo |   Tampered proof check: [OK] INVALID (correct – tampering detected)
+merkle-demo | ────────────────────────────────────────────────────────────────
+merkle-demo |
+merkle-demo | Step 5 — Light-client simulation (Extension C) …
+merkle-demo |   Light-client verification for tx 0x...:
+merkle-demo |   Result: [OK] INCLUDED
+merkle-demo |
+merkle-demo | ================================================================
+merkle-demo |   ALL STEPS COMPLETE
+merkle-demo | ================================================================
+` }
+  ];
+
+  async function typeText(text, element) {
+    for (let i = 0; i < text.length; i++) {
+      element.innerHTML += text.charAt(i);
+      await new Promise(r => setTimeout(r, 50));
+    }
+  }
+
+  async function runDemo() {
+    for (const cmd of commands) {
+      const promptDiv = document.createElement('div');
+      promptDiv.className = 'prompt';
+      terminal.appendChild(promptDiv);
+      await typeText(cmd.text, promptDiv);
+      await new Promise(r => setTimeout(r, 500));
+      
+      const outputDiv = document.createElement('div');
+      outputDiv.textContent = cmd.output;
+      terminal.appendChild(outputDiv);
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    const finalPrompt = document.createElement('div');
+    finalPrompt.className = 'prompt';
+    terminal.appendChild(finalPrompt);
+  }
+
+  runDemo();
+</script>
+</body>
+</html>
